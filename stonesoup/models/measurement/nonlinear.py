@@ -643,7 +643,7 @@ class Cartesian2DToBearing(NonLinearGaussianMeasurement):
         return out
 
 
-class CartesianToBearingRangeRate(NonLinearGaussianMeasurement):
+class CartesianToBearingRangeRate(NonLinearGaussianMeasurement, ReversibleModel):
     r"""This is a class implementation of a time-invariant measurement model, \
     where measurements are assumed to be received in the form of bearing \
     (:math:`\phi`), range (:math:`r`) and range-rate (:math:`\dot{r}`),
@@ -796,8 +796,7 @@ class CartesianToBearingRangeRate(NonLinearGaussianMeasurement):
         x_rate = np.cos(phi) * rho_rate
         y_rate = np.sin(phi) * rho_rate
 
-        inv_rotation_matrix = inv(self.rotation_matrix)
-
+        inv_rotation_matrix = inv(self.rotation_matrix)[:len(self.mapping), :len(self.mapping)]
         out_vector = StateVector([[0.], [0.], [0.], [0.], [0.], [0.]])
         out_vector[self.mapping, 0] = x, y
         out_vector[self.velocity_mapping, 0] = x_rate, y_rate
