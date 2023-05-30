@@ -19,7 +19,7 @@ from ..base import Property
 from ..buffered_generator import BufferedGenerator
 from ..types.detection import Detection
 from ..types.groundtruth import GroundTruthPath, GroundTruthState
-
+from ..models.measurement import MeasurementModel
 
 class _CSVReader(TextFileReader):
     state_vector_fields: Sequence[str] = Property(
@@ -103,7 +103,7 @@ class CSVGroundTruthReader(GroundTruthReader, _CSVReader):
             yield previous_time, updated_paths
 
 
-class CSVDetectionReader(DetectionReader, _CSVReader):
+class CSVDetectionReader(DetectionReader, _CSVReader, sensor_measurement_model=None):
     """A simple detection reader for csv files of detections.
 
     CSV file must have headers, as these are used to determine which fields to use to generate
@@ -131,7 +131,8 @@ class CSVDetectionReader(DetectionReader, _CSVReader):
                     np.array([[row[col_name]] for col_name in self.state_vector_fields],
                              dtype=np.float_),
                     timestamp=time,
-                    metadata=self._get_metadata(row)))
+                    metadata=self._get_metadata(row),
+                    measurement_model = self.sensor_measurement_model))
 
             # Yield remaining
             yield previous_time, detections
