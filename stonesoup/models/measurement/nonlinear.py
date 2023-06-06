@@ -794,8 +794,8 @@ class CartesianToBearingRangeRate(NonLinearGaussianMeasurement, ReversibleModel)
 
         inv_rotation_matrix = inv(self.rotation_matrix)
         out_vector = StateVector([[0.], [0.], [0.], [0.], [0.], [0.]])
-        out_vector[self.mapping, 0] = x, y
-        out_vector[self.velocity_mapping, 0] = x_rate, y_rate
+        out_vector[self.mapping, 0] = x, y, float('nan') # z position cannot be calculated from inverse of measurement
+        out_vector[self.velocity_mapping, 0] = x_rate, y_rate, float('nan') # z velocity same as z position
 
         out_vector[self.mapping, :] = inv_rotation_matrix @ out_vector[self.mapping, :]
         out_vector[self.velocity_mapping, :] = \
